@@ -1,5 +1,4 @@
 import enum
-import json
 import re
 from pathlib import Path
 from typing import List, Optional
@@ -122,7 +121,7 @@ def create_tlc_json_files():
     samples = process_tlc_files()
     for sample in samples:
         with open(TLCPaths.json_dir.joinpath(sample.file_name + ".json"), "w") as fp:
-            json.dump(sample.json(), fp=fp)
+            fp.write(sample.json())
 
 
 def load_tlc_samples():

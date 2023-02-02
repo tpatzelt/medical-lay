@@ -4,10 +4,19 @@ import re
 from pathlib import Path
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from tqdm import tqdm
 
 from config import TLCPaths
+
+
+class IntGenerator:
+    def __init__(self):
+        self.i = 0
+
+    def __call__(self, *args, **kwargs):
+        self.i += 1
+        return self.i
 
 
 class TermType(enum.StrEnum):
@@ -26,6 +35,7 @@ class Annotation(BaseModel):
     type: TermType
     span_start: int
     span_end: int
+    id: int = Field(default_factory=IntGenerator())
 
 
 class Sample(BaseModel):
@@ -33,6 +43,7 @@ class Sample(BaseModel):
     text: str
     file_name: str
     subforum: SubForumType
+    id: int = Field(default_factory=IntGenerator())
 
 
 def process_sample_file(file: Path):

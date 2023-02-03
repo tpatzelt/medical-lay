@@ -85,7 +85,7 @@ def process_annotation_file(file: Path):
         source_term = line_content[2]
         source_tag = line_content[0]
         target_term = None
-        for j in range(i + 1, i + 5):  # increase to max dep. on exec time
+        for j in range(i + 1, i + 10):  # increase to max dep. on exec time
             try:
                 next_line_content = line_contents[j]
                 if (source_tag not in next_line_content[1] or

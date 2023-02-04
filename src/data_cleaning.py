@@ -96,8 +96,7 @@ def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True
     return SearchTerms(terms=search_terms)
 
 
-def link_synonyms(search_terms: SearchTerms):
-    search_terms = search_terms.terms
+def link_synonyms(search_terms: List[SearchTerm]):
     while True:
         with tqdm(total=len(search_terms) ** 2) as pbar:
             found_new_link = False

@@ -8,6 +8,9 @@ from tqdm import tqdm
 
 from config import TLCPaths
 
+TO_STRIP = " .,-"
+TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", ]
+
 
 class IntGenerator:
     def __init__(self):
@@ -34,6 +37,7 @@ class Annotation(BaseModel):
     type: TermType
     span_start: int
     span_end: int
+    synonyms: List[str] = []
     id: int = Field(default_factory=IntGenerator())
 
 
@@ -82,9 +86,9 @@ def process_annotation_file(file: Path):
             continue
         spans = line_content[1].replace(";", "").split(" ")
         span_start, span_end = int(spans[1]), int(spans[-1])
-        source_term = line_content[2]
+        source_term = line_content[2].strip()
         source_tag = line_content[0]
-        target_term = None
+        synonyms = []
         for j in range(i + 1, i + 10):  # increase to max dep. on exec time
             try:
                 next_line_content = line_contents[j]
@@ -92,15 +96,90 @@ def process_annotation_file(file: Path):
                         "AnnotatorNotes" not in next_line_content[1]):
                     continue
                 else:
-                    target_term = next_line_content[2]
-                    break
+                    synonyms.append(next_line_content[2])
             except IndexError:
                 continue
-        lay_term = source_term if source_type == TermType.LAY else target_term
-        tech_term = source_term if source_type == TermType.TECH else target_term
-        annotations.append(Annotation(tech_term=tech_term, lay_term=lay_term, type=source_type,
-                                      span_start=span_start, span_end=span_end))
+        if source_type == TermType.LAY:
+            annotation = Annotation(lay_term=source_term, type=source_type, span_start=span_start,
+                                    span_end=span_end, synonyms=synonyms)
+        elif source_type == TermType.TECH:
+            annotation = Annotation(tech_term=source_term, type=source_type,
+                                    span_start=span_start, span_end=span_end, synonyms=synonyms)
+        else:
+            raise ValueError(f"Source type {source_type} not known.")
+        annotations.append(annotation)
     return annotations
+
+
+def clean_tech_annotation(annotation: Annotation):
+    if not annotation.tech_term:
+        return annotation
+    text = annotation.tech_term
+    if any([trigger in text for trigger in TECH_TERM_TRIGGERS]):
+        raise ValueError
+    text = text.strip(TO_STRIP)
+    to_remove = TECH_TERM_TRIGGERS + []
+    for item in to_remove:
+        text = text.replace(item, "")
+        text = text.strip(TO_STRIP)
+    annotation.tech_term = text
+    return annotation
+
+
+def clean_lay_annotation(annotation: Annotation):
+    if not annotation.lay_term:
+        return annotation
+    text = annotation.lay_term
+    if any([trigger in text for trigger in TECH_TERM_TRIGGERS]):
+        raise ValueError
+    text = text.strip(TO_STRIP)
+    to_remove = []
+    for item in to_remove:
+        text = text.replace(item, "")
+        text = text.strip(TO_STRIP)
+    annotation.lay_term = text
+    return annotation
+
+
+def clean_synonyms_annotation(annotation: Annotation):
+    if not annotation.synonyms:
+        return annotation
+    synonym_triggers = ["Syn.:", "Synonym:", "Syn,:"]
+    new_synonyms = []
+    for text in annotation.synonyms:
+        try:
+            trigger = next(syn for syn in synonym_triggers if syn in text)
+        except StopIteration:
+            new_synonyms.append(text)
+            continue
+        split_synonym = text.split(trigger)
+        if not split_synonym[0]:
+            new_synonyms.append(split_synonym[1])
+            continue
+        if len(split_synonym) > 2:
+            raise RuntimeWarning("Found more than two synonyms in one annotation")
+        new_synonyms.extend(split_synonym)
+    annotation.synonyms = new_synonyms
+
+    # clean synonyms
+    new_synonyms = []
+    for text in annotation.synonyms:
+        text = text.strip(TO_STRIP)
+        to_remove = TECH_TERM_TRIGGERS + []
+        for item in to_remove:
+            text = text.replace(item, "")
+            text = text.strip(TO_STRIP)
+        new_synonyms.append(text)
+    annotation.synonyms = new_synonyms
+    return annotation
+
+
+def clean_annotation(annotation: Annotation):
+    annotation = clean_lay_annotation(annotation)
+    annotation = clean_tech_annotation(annotation)
+    # order matters because synonyms could still be added from lay or tech terms
+    annotation = clean_synonyms_annotation(annotation)
+    return annotation
 
 
 def process_tlc_files():
@@ -110,6 +189,7 @@ def process_tlc_files():
             file for file in TLCPaths.annotation_files if sample_file.stem == file.stem)
         text = process_sample_file(sample_file)
         annotations = process_annotation_file(annotation_file)
+        annotations = [clean_annotation(annotation) for annotation in annotations]
         subforum = SubForumType.KIDNEY if "Kidney" == str(
             sample_file.parent.stem) else SubForumType.STOMACH
         samples.append(Sample(annotations=annotations, text=text, file_name=sample_file.stem,

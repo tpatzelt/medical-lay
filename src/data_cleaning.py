@@ -80,7 +80,7 @@ def clean_annotation(annotation: Annotation):
     return annotation
 
 
-def create_search_terms_from_samples(samples: List[Sample]):
+def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True):
     search_terms = []
     annotations = [ann for sample in samples for ann in sample.annotations]
     for annotation in annotations:
@@ -91,6 +91,8 @@ def create_search_terms_from_samples(samples: List[Sample]):
             stems.extend([" ".join([stem(word) for word in term.split(" ")])])
         search_term = SearchTerm(annotation=annotation, stems=set(stems))
         search_terms.append(search_term)
+    if intersect_terms:
+        link_synonyms(search_terms)
     return SearchTerms(terms=search_terms)
 
 

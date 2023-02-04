@@ -101,12 +101,9 @@ def load_tlc_samples():
     return samples
 
 
-def create_search_terms_json_file(link_synonyms: True):
+def create_search_terms_json_file():
     samples = load_tlc_samples()
     search_terms = create_search_terms_from_samples(samples)
-    if link_synonyms:
-        link_synonyms(search_terms)
-    # add cross synonyms from search terms
     with open(TLCPaths.search_term_file, "w") as fp:
         fp.write(search_terms.json())
     return search_terms

@@ -3,8 +3,10 @@ from typing import List
 from tqdm import tqdm
 
 from cistem import stem
-from data_loading import TECH_TERM_TRIGGERS, TO_STRIP
 from models import Annotation, Sample, TermType, SearchTerm, SearchTerms
+
+TO_STRIP = " .,-"
+TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", ]
 
 
 def clean_tech_annotation(annotation: Annotation):

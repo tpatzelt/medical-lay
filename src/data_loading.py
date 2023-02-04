@@ -7,9 +7,6 @@ from config import TLCPaths
 from data_cleaning import clean_annotation, create_search_terms_from_samples
 from models import TermType, SubForumType, Annotation, Sample, SearchTerms
 
-TO_STRIP = " .,-"
-TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", ]
-
 
 def process_sample_file(file: Path):
     try:
@@ -112,6 +109,7 @@ def create_search_terms_json_file(link_synonyms: True):
     # add cross synonyms from search terms
     with open(TLCPaths.search_term_file, "w") as fp:
         fp.write(search_terms.json())
+    return search_terms
 
 
 def load_search_terms():

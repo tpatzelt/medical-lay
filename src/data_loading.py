@@ -202,6 +202,7 @@ def create_tlc_json_files():
     for sample in samples:
         with open(TLCPaths.json_dir.joinpath(sample.file_name + ".json"), "w") as fp:
             fp.write(sample.json())
+    return samples
 
 
 def load_tlc_samples():

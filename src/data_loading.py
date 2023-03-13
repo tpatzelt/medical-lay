@@ -1,4 +1,3 @@
-import re
 from pathlib import Path
 
 from tqdm import tqdm
@@ -15,14 +14,15 @@ def process_sample_file(file: Path):
     except UnicodeDecodeError:
         with open(file, encoding="latin-1") as fp:
             content = fp.read()
+    return content
 
-    pattern = re.compile(r"Text: \[[^$]*")
-    res = pattern.search(content)
-    if not res:
-        print(content)
-        print(file)
-    text = res.group().lstrip("Text: [").rstrip("]\n")
-    return text
+    # pattern = re.compile(r"Text: \[[^$]*")
+    # res = pattern.search(content)
+    # if not res:
+    #     print(content)
+    #     print(file)
+    # text = res.group().lstrip("Text: [").rstrip("]\n")
+    # return text
 
 
 def process_annotation_file(file: Path):

@@ -6,7 +6,7 @@ from cistem import stem
 from models import Annotation, Sample, TermType, SearchTerm, SearchTerms
 
 TO_STRIP = " .,-"
-TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", ]
+TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)", "( von lat.)"]
 
 
 def clean_tech_annotation(annotation: Annotation):
@@ -42,7 +42,7 @@ def clean_lay_annotation(annotation: Annotation):
 def clean_synonyms_annotation(annotation: Annotation):
     if not annotation.synonyms:
         return annotation
-    synonym_triggers = ["Syn.:", "Synonym:", "Syn,:"]
+    synonym_triggers = ["Syn.:", "Synonym:", "Syn,:", "syn. "]
     new_synonyms = []
     for text in annotation.synonyms:
         try:

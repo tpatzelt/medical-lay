@@ -32,6 +32,9 @@ class Annotation(BaseModel):
     synonyms: List[str] = []
     id: int = Field(default_factory=IntGenerator())
 
+    def get_mention(self):
+        return self.tech_term if self.type == TermType.TECH else self.lay_term
+
 
 class Sample(BaseModel):
     annotations: List[Annotation]

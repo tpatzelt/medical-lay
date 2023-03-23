@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from tqdm import tqdm
@@ -111,3 +112,10 @@ def create_search_terms_json_file():
 
 def load_search_terms():
     return SearchTerms.parse_file(TLCPaths.search_term_file)
+
+
+def load_jsonl_file_as_generator(path):
+    """Load a jsonl file as a generator of json objects."""
+    with open(path) as fp:
+        for line in fp:
+            yield json.loads(line)

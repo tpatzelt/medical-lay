@@ -1,5 +1,5 @@
 import enum
-from typing import Optional, List, Set
+from typing import Optional, List, Set, Dict
 
 from pydantic import BaseModel, Field
 
@@ -51,3 +51,41 @@ class SearchTerm(BaseModel):
 
 class SearchTerms(BaseModel):
     terms: List[SearchTerm]
+
+
+class Match(BaseModel):
+    mention: SearchTerm
+    match: Optional[Dict] = None
+    matched_string: Optional[str] = None
+    # keep string because a search term can have multiple strings to match
+
+
+class SampleCollection:
+    def __init__(self, samples):
+        self.samples = samples
+        self.id_mapping = {sample.id: sample for sample in self.samples}
+        self.annotation_id_mapping = {annotation.id: sample for sample in self.samples for
+                                      annotation in sample.annotations}
+
+    def get_sample_by_id(self, identifier: int):
+        return self.id_mapping[identifier]
+
+    def get_sample_by_annotation_id(self, identifier: int):
+        return self.annotation_id_mapping[identifier]
+
+
+class WUMLSEntry(BaseModel):
+    # id: int = Field(default_factory=IntGenerator())
+    cui: str
+    source: str
+    language: str
+    name: str
+    index_term: str
+
+
+class WUMLSMultiValuedEntry(BaseModel):
+    cui: str
+    source: str
+    language: str
+    names: List[str]
+    index_terms: List[str] = []

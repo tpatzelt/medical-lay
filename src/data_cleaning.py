@@ -6,7 +6,8 @@ from cistem import stem
 from models import Annotation, Sample, TermType, SearchTerm, SearchTerms
 
 TO_STRIP = " .,-"
-TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)", "( von lat.)"]
+TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)", "( von lat.)",
+                      "(von gr. und lat.)", "(von lat. und gr.)"]
 
 
 def clean_tech_annotation(annotation: Annotation):

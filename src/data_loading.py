@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+import diskcache as dc
 from tqdm import tqdm
 
 from config import TLCPaths
@@ -119,3 +120,12 @@ def load_jsonl_file_as_generator(path):
     with open(path) as fp:
         for line in fp:
             yield json.loads(line)
+
+
+annotations_cache = dc.Cache("annotations_ids")
+
+
+@annotations_cache.memoize()
+def get_annotation_ids(mention: str):
+    """Get all annotations ids for a mention."""
+    return annotations_cache[mention]

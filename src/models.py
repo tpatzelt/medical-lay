@@ -1,5 +1,5 @@
 import enum
-from typing import Optional, List, Set, Dict
+from typing import Optional, List, Set, Dict, Literal
 
 from pydantic import BaseModel, Field
 
@@ -89,3 +89,17 @@ class WUMLSMultiValuedEntry(BaseModel):
     language: str
     names: List[str]
     index_terms: List[str] = []
+
+
+class ProdigyNERLabel(BaseModel):
+    start: int
+    end: int
+    label: Literal["Mention"] = "Mention"
+
+
+class ProdigySample(BaseModel):
+    text: str
+    spans: List[ProdigyNERLabel]
+    html: str
+    annotation_ids: List[int]
+    cui: str

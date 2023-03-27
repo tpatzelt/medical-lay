@@ -122,7 +122,7 @@ def load_jsonl_file_as_generator(path):
             yield json.loads(line)
 
 
-annotations_cache = dc.Cache("annotations_ids")
+annotations_cache = dc.Cache("caches/annotations_ids")
 
 
 @annotations_cache.memoize()

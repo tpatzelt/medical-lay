@@ -16,6 +16,8 @@ pandas = "^1.5.3"
 spacy = "^3.5.0"
 pysolr = "^3.9.0"
 python-levenshtein = "^0.20.9"
+deepl = "^1.14.0"
+diskcache = "^5.4.0"
 
 
 [build-system]

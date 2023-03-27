@@ -559,6 +559,24 @@ files = [
 ]
 
 [[package]]
+name = "deepl"
+version = "1.14.0"
+description = "Python library for the DeepL API."
+category = "main"
+optional = false
+python-versions = ">=3.6.2,<4"
+files = [
+    { file = "deepl-1.14.0-py3-none-any.whl", hash = "sha256:7203b495d3356559b433544385d58c50257ad48035fc490730258b76fedd82f6" },
+    { file = "deepl-1.14.0.tar.gz", hash = "sha256:8d41f1cb1f9bd4e20224702cf25879355b65f8c131c8460cff27ecdaacfa7efe" },
+]
+
+[package.dependencies]
+requests = ">=2,<3"
+
+[package.extras]
+keyring = ["keyring (>=23.4.1,<24.0.0)"]
+
+[[package]]
 name = "defusedxml"
 version = "0.7.1"
 description = "XML bomb protection for Python stdlib modules"
@@ -568,6 +586,18 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 files = [
     { file = "defusedxml-0.7.1-py2.py3-none-any.whl", hash = "sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61" },
     { file = "defusedxml-0.7.1.tar.gz", hash = "sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69" },
+]
+
+[[package]]
+name = "diskcache"
+version = "5.4.0"
+description = "Disk Cache -- Disk and file backed persistent cache."
+category = "main"
+optional = false
+python-versions = ">=3"
+files = [
+    { file = "diskcache-5.4.0-py3-none-any.whl", hash = "sha256:af3ec6d7f167bbef7b6c33d9ee22f86d3e8f2dd7131eb7c4703d8d91ccdc0cc4" },
+    { file = "diskcache-5.4.0.tar.gz", hash = "sha256:8879eb8c9b4a2509a5e633d2008634fb2b0b35c2b36192d89655dbde02419644" },
 ]
 
 [[package]]
@@ -2925,4 +2955,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "aec3cf8820da32b7ef6475996e3671c6d5be7f29204d322b5135b702d50f896f"
+content-hash = "d4480e56274f02ad24ce1c0b20e11aaeb53d58e6681fa346d3567ffc8b11b57e"

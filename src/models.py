@@ -80,7 +80,7 @@ class WUMLSEntry(BaseModel):
     source: str
     language: str
     name: str
-    index_term: str
+    index_term: str = None  # is the stemmed name
 
 
 class WUMLSMultiValuedEntry(BaseModel):

@@ -1,3 +1,4 @@
+import csv
 import json
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from tqdm import tqdm
 from config import TLCPaths
 from data_cleaning import clean_annotation, create_search_terms_from_samples
 from models import TermType, SubForumType, Annotation, Sample, SearchTerms
+from models import WUMLSEntry
 
 
 def process_sample_file(file: Path):
@@ -129,3 +131,17 @@ annotations_cache = dc.Cache("caches/annotations_ids")
 def get_annotation_ids(mention: str):
     """Get all annotations ids for a mention."""
     return annotations_cache[mention]
+
+
+def load_wumls_entries(wumls_file='/home/tim/MedicalLay/WUMLS/MRCONSO_WUMLS_GER.RRF'):
+    entries = []
+    with open(wumls_file, newline='\n') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter='|')
+        for row in spamreader:
+            cui = row[0]
+            language = row[1]
+            source = row[11]
+            name = row[14]
+            entry = WUMLSEntry(cui=cui, language=language, name=name, source=source)
+            entries.append(entry)
+    return entries

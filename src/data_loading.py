@@ -130,7 +130,12 @@ annotations_cache = dc.Cache("caches/annotations_ids")
 @annotations_cache.memoize()
 def get_annotation_ids(mention: str):
     """Get all annotations ids for a mention."""
-    return annotations_cache[mention]
+    annotations = [ann for sample in load_tlc_samples() for ann in sample.annotations]
+    res = []
+    for ann in annotations:
+        if ann.get_mention() == mention:
+            res.append(ann.id)
+    return res
 
 
 def load_wumls_entries(wumls_file='/home/tim/MedicalLay/WUMLS/MRCONSO_WUMLS_GER.RRF'):

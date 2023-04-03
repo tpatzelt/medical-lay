@@ -61,6 +61,9 @@ def clean_synonyms_annotation(annotation: Annotation):
     annotation.synonyms = new_synonyms
 
     # clean synonyms
+    splitters = [" und", "(", " oder", " - "]
+    lstrips = ["Laien:", "Laienbegriff:"]
+
     new_synonyms = []
     for text in annotation.synonyms:
         text = text.strip(TO_STRIP)
@@ -69,6 +72,11 @@ def clean_synonyms_annotation(annotation: Annotation):
             text = text.replace(item, "")
             text = text.strip(TO_STRIP)
         new_synonyms.append(text)
+        for splitter in splitters:
+            text = text.split(splitter)[0]
+        for lstrip in lstrips:
+            text = text.removeprefix(lstrip)
+        new_synonyms.append(text.strip())
     annotation.synonyms = new_synonyms
     return annotation
 

@@ -103,3 +103,4 @@ class ProdigySample(BaseModel):
     html: str
     annotation_ids: List[int]
     cui: str
+    meta: dict = {}

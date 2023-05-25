@@ -93,7 +93,7 @@ def create_tlc_json_files():
     samples = process_tlc_files()
     for sample in samples:
         with open(TLCPaths.json_dir.joinpath(sample.file_name + ".json"), "w") as fp:
-            fp.write(sample.json())
+            fp.write(sample.json(ensure_ascii=False))
     return samples
 
 
@@ -109,7 +109,7 @@ def create_search_terms_json_file():
     samples = load_tlc_samples()
     search_terms = create_search_terms_from_samples(samples)
     with open(TLCPaths.search_term_file, "w") as fp:
-        fp.write(search_terms.json())
+        fp.write(search_terms.json(ensure_ascii=False))
     return search_terms
 
 
@@ -126,11 +126,12 @@ def load_jsonl_file_as_generator(path):
 
 annotations_cache = dc.Cache("caches/annotations_ids")
 
+annotations = [ann for sample in load_tlc_samples() for ann in sample.annotations]
 
 @annotations_cache.memoize()
 def get_annotation_ids(mention: str):
     """Get all annotations ids for a mention."""
-    annotations = [ann for sample in load_tlc_samples() for ann in sample.annotations]
+
     res = []
     for ann in annotations:
         if ann.get_mention() == mention:

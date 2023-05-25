@@ -2,8 +2,8 @@ from typing import List
 
 from tqdm import tqdm
 
-from cistem import stem
 from models import Annotation, Sample, TermType, SearchTerm, SearchTerms
+from preprocessing.cistem import stem
 
 TO_STRIP = " .,-"
 TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)", "( von lat.)",

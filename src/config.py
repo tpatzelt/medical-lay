@@ -2,7 +2,7 @@ from pathlib import Path
 
 
 class TLCPaths:
-    tlc_dir = Path("/home/tim/MedicalLay/TLC_v01")
+    tlc_dir = Path("/home/tim/MedicalLay/datasets/TLC_v01")
     kidney_dir = tlc_dir.joinpath("Kidney")
     stomach_dir = tlc_dir.joinpath("StomachIntestines")
     dataset_files = list(kidney_dir.iterdir()) + list(stomach_dir.iterdir())

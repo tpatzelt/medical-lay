@@ -50,7 +50,7 @@ class UMLS_CUIs:
 
         :param location: location of MRCONSO.rff
         """
-        with open(location, 'r') as fil:
+        with open(location) as fil:
             for line in fil:
                 split = line.split('|')
                 umls_cui, language, kb, term_type, kb_cui, kb_name = self.__getConcepts(split)
@@ -114,7 +114,7 @@ class UMLS_CUIs:
             # print ''
             # else:
             # self.structure[umls_cui][self.cui[kb]] = kb_cui
-            if self.structure[umls_cui][0] == None:
+            if self.structure[umls_cui][0] is None:
                 self.structure[umls_cui][0] = kb_name
             if kb_cui not in self.structure[umls_cui][self.cui[kb]]:
                 self.structure[umls_cui][self.cui[kb]].append(kb_cui)

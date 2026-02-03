@@ -23,9 +23,9 @@ def process_umls_index_dataset(data_path, data_savename, id2string_savename, hea
     id2string = {}
 
     with open(data_savename, "w") as outfile:
-        for idx, row in tqdm(df.iterrows(), total=df.shape[0]):
+        for _, row in tqdm(df.iterrows(), total=df.shape[0]):
             # Address incorrectly formatted data
-            if type(row["STR"]) != str or "|" in row["STR"]:
+            if not isinstance(row["STR"], str) or "|" in row["STR"]:
                 continue
 
             cui = row["CUI"]

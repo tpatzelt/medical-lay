@@ -19,7 +19,7 @@ import re
 
 stripge = re.compile(r"^ge(.{4,})")
 replxx = re.compile(r"(.)\1")
-replxxback = re.compile(r"(.)\*");
+replxxback = re.compile(r"(.)\*")
 stripemr = re.compile(r"e[mr]$")
 stripnd = re.compile(r"nd$")
 stript = re.compile(r"t$")

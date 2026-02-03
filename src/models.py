@@ -1,5 +1,5 @@
 import enum
-from typing import Optional, List, Set, Dict, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -24,12 +24,12 @@ class SubForumType(enum.StrEnum):
 
 
 class Annotation(BaseModel):
-    tech_term: Optional[str]
-    lay_term: Optional[str]
+    tech_term: str | None
+    lay_term: str | None
     type: TermType
     span_start: int
     span_end: int
-    synonyms: List[str] = []
+    synonyms: list[str] = []
     id: int = Field(default_factory=IntGenerator())
 
     def get_mention(self):
@@ -37,7 +37,7 @@ class Annotation(BaseModel):
 
 
 class Sample(BaseModel):
-    annotations: List[Annotation]
+    annotations: list[Annotation]
     text: str
     file_name: str
     subforum: SubForumType
@@ -46,17 +46,17 @@ class Sample(BaseModel):
 
 class SearchTerm(BaseModel):
     annotation: Annotation
-    stems: Set[str] = set()
+    stems: set[str] = set()
 
 
 class SearchTerms(BaseModel):
-    terms: List[SearchTerm]
+    terms: list[SearchTerm]
 
 
 class Match(BaseModel):
     mention: SearchTerm
-    match: Optional[Dict] = None
-    matched_string: Optional[str] = None
+    match: dict | None = None
+    matched_string: str | None = None
     # keep string because a search term can have multiple strings to match
 
 
@@ -80,15 +80,15 @@ class WUMLSEntry(BaseModel):
     source: str
     language: str
     name: str
-    index_term: str = None  # is the stemmed name
+    index_term: str | None = None  # is the stemmed name
 
 
 class WUMLSMultiValuedEntry(BaseModel):
     cui: str
     source: str
     language: str
-    names: List[str]
-    index_terms: List[str] = []
+    names: list[str]
+    index_terms: list[str] = []
 
 
 class ProdigyNERLabel(BaseModel):
@@ -99,8 +99,8 @@ class ProdigyNERLabel(BaseModel):
 
 class ProdigySample(BaseModel):
     text: str
-    spans: List[ProdigyNERLabel]
+    spans: list[ProdigyNERLabel]
     html: str
-    annotation_ids: List[int]
+    annotation_ids: list[int]
     cui: str
     meta: dict = {}

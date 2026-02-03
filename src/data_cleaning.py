@@ -5,11 +5,9 @@ annotations from the TLC-UMLS dataset, including technical terms, lay terms,
 and their synonyms.
 """
 
-from typing import List
-
 from tqdm import tqdm
 
-from models import Annotation, Sample, TermType, SearchTerm, SearchTerms
+from models import Annotation, Sample, SearchTerm, SearchTerms, TermType
 from preprocessing.cistem import stem
 
 TO_STRIP = " .,-"
@@ -19,23 +17,23 @@ TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)"
 
 def clean_tech_annotation(annotation: Annotation):
     """Clean technical medical term annotations.
-    
+
     Removes language indicators and standardizes formatting of technical terms.
     Raises ValueError if annotation contains unexpected technical term triggers.
-    
+
     Args:
         annotation: The annotation object to clean.
-        
+
     Returns:
         The cleaned annotation with normalized technical term.
-        
+
     Raises:
         ValueError: If annotation contains unexpected technical term triggers.
     """
     if not annotation.tech_term:
         return annotation
     text = annotation.tech_term
-    if any([trigger in text for trigger in TECH_TERM_TRIGGERS]):
+    if any(trigger in text for trigger in TECH_TERM_TRIGGERS):
         raise ValueError
     text = text.strip(TO_STRIP)
     to_remove = TECH_TERM_TRIGGERS + []
@@ -48,22 +46,22 @@ def clean_tech_annotation(annotation: Annotation):
 
 def clean_lay_annotation(annotation: Annotation):
     """Clean lay medical term annotations.
-    
+
     Removes unnecessary characters and standardizes formatting of lay terms.
-    
+
     Args:
         annotation: The annotation object to clean.
-        
+
     Returns:
         The cleaned annotation with normalized lay term.
-        
+
     Raises:
         ValueError: If annotation contains unexpected technical term triggers.
     """
     if not annotation.lay_term:
         return annotation
     text = annotation.lay_term
-    if any([trigger in text for trigger in TECH_TERM_TRIGGERS]):
+    if any(trigger in text for trigger in TECH_TERM_TRIGGERS):
         raise ValueError
     text = text.strip(TO_STRIP)
     to_remove = []
@@ -76,13 +74,13 @@ def clean_lay_annotation(annotation: Annotation):
 
 def clean_synonyms_annotation(annotation: Annotation):
     """Clean and normalize synonym annotations.
-    
+
     Parses synonym fields, splits combined synonyms, and normalizes formatting.
     Handles various synonym markers like 'Syn.:', 'Synonym:', etc.
-    
+
     Args:
         annotation: The annotation object with synonyms to clean.
-        
+
     Returns:
         The cleaned annotation with normalized synonyms list.
     """
@@ -128,13 +126,13 @@ def clean_synonyms_annotation(annotation: Annotation):
 
 def clean_annotation(annotation: Annotation):
     """Clean all components of an annotation.
-    
+
     Applies cleaning to lay terms, technical terms, and synonyms in sequence.
     Order matters as synonyms may reference cleaned lay/tech terms.
-    
+
     Args:
         annotation: The annotation object to fully clean.
-        
+
     Returns:
         The fully cleaned annotation.
     """
@@ -145,16 +143,16 @@ def clean_annotation(annotation: Annotation):
     return annotation
 
 
-def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True):
+def create_search_terms_from_samples(samples: list[Sample], intersect_terms=True):
     """Create search terms with stems from annotated samples.
-    
+
     Generates searchable terms by stemming medical terms and their synonyms
     using the CISTEM stemmer. Optionally links synonyms with overlapping stems.
-    
+
     Args:
         samples: List of Sample objects containing annotations.
         intersect_terms: If True, link terms with overlapping stems.
-        
+
     Returns:
         SearchTerms object containing all processed search terms.
     """
@@ -165,7 +163,7 @@ def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True
         synonym_terms = [annotation_term] + annotation.synonyms
         stems = []
         for term in synonym_terms:
-            stems.extend([" ".join([stem(word) for word in term.split(" ")])])
+            stems.append(" ".join(stem(word) for word in term.split(" ")))
         search_term = SearchTerm(annotation=annotation, stems=set(stems))
         search_terms.append(search_term)
     if intersect_terms:
@@ -173,15 +171,15 @@ def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True
     return SearchTerms(terms=search_terms)
 
 
-def link_synonyms(search_terms: List[SearchTerm]):
+def link_synonyms(search_terms: list[SearchTerm]):
     """Link search terms with overlapping stems.
-    
+
     Iteratively finds and merges search terms that share common stems,
     creating connected synonym groups. Continues until no new links are found.
-    
+
     Args:
         search_terms: List of SearchTerm objects to link.
-        
+
     Note:
         Modifies search_terms in place by updating their stems sets.
     """

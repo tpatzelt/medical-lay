@@ -1,9 +1,4 @@
-@article{patzelt2024medical,
-  title={Medical Concept Normalization in a Low-Resource Setting},
-  author={Patzelt, Tim},
-  journal={arXiv preprint arXiv:2409.14579},
-  year={2024}
-}[tool.poetry]
+[tool.poetry]
 name = "medical-lay"
 version = "1.0.0"
 description = "Medical concept normalization in low-resource settings for German lay texts"

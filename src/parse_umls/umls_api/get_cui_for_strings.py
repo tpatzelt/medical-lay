@@ -3,13 +3,14 @@
 # Each set of results for a string is separated in the output file with '***'.
 
 import argparse
+import os
 
 import requests
 
 parser = argparse.ArgumentParser(description='process user given parameters')
 parser.add_argument('-k', '--apikey', required=False, dest='apikey',
                     help='enter api key from your UTS Profile',
-                    default="43f9234c-4977-45f6-a440-2dda1b43d919")
+                    default=os.getenv("UMLS_API_KEY", ""))
 parser.add_argument('-v', '--version', required=False, dest='version', default='current',
                     help='enter version example-2015AA')
 parser.add_argument('-o', '--outputfile', required=True, dest='outputfile',
@@ -55,7 +56,6 @@ with open(outputfile, 'w', encoding='utf-8') as o:
                      'pageNumber': page}
             output = requests.get(base_uri + path, params=query)
             output.encoding = 'utf-8'
-            # print(output.url)
 
             outputJson = output.json()
             results = (([outputJson['result']])[0])['results']

@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Medical Concept Normalization for German Lay Texts"
+abstract: "Research code for medical concept normalization in low-resource settings, specifically normalizing German medical forum posts to UMLS concepts using multilingual Transformer models (SapBERT)."
+authors:
+  - family-names: "Patzelt"
+    given-names: "Tim"
+    email: "tpatzelt@uos.de"
+repository-code: "https://github.com/tpatzelt/medical-lay"
+license: MIT
+keywords:
+  - medical-nlp
+  - concept-normalization
+  - low-resource-nlp
+  - german-language
+  - umls
+  - sapbert
+  - transformer-models
+version: 1.0.0
+date-released: 2026-02-03

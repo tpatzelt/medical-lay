@@ -1,3 +1,10 @@
+"""Data cleaning utilities for medical text annotations.
+
+This module provides functions to clean and normalize medical terminology
+annotations from the TLC-UMLS dataset, including technical terms, lay terms,
+and their synonyms.
+"""
+
 from typing import List
 
 from tqdm import tqdm
@@ -11,6 +18,20 @@ TECH_TERM_TRIGGERS = ["(lat.)", "(gr.)", "(von lat.)", "(von gr.)", "( von gr.)"
 
 
 def clean_tech_annotation(annotation: Annotation):
+    """Clean technical medical term annotations.
+    
+    Removes language indicators and standardizes formatting of technical terms.
+    Raises ValueError if annotation contains unexpected technical term triggers.
+    
+    Args:
+        annotation: The annotation object to clean.
+        
+    Returns:
+        The cleaned annotation with normalized technical term.
+        
+    Raises:
+        ValueError: If annotation contains unexpected technical term triggers.
+    """
     if not annotation.tech_term:
         return annotation
     text = annotation.tech_term
@@ -26,6 +47,19 @@ def clean_tech_annotation(annotation: Annotation):
 
 
 def clean_lay_annotation(annotation: Annotation):
+    """Clean lay medical term annotations.
+    
+    Removes unnecessary characters and standardizes formatting of lay terms.
+    
+    Args:
+        annotation: The annotation object to clean.
+        
+    Returns:
+        The cleaned annotation with normalized lay term.
+        
+    Raises:
+        ValueError: If annotation contains unexpected technical term triggers.
+    """
     if not annotation.lay_term:
         return annotation
     text = annotation.lay_term
@@ -41,6 +75,17 @@ def clean_lay_annotation(annotation: Annotation):
 
 
 def clean_synonyms_annotation(annotation: Annotation):
+    """Clean and normalize synonym annotations.
+    
+    Parses synonym fields, splits combined synonyms, and normalizes formatting.
+    Handles various synonym markers like 'Syn.:', 'Synonym:', etc.
+    
+    Args:
+        annotation: The annotation object with synonyms to clean.
+        
+    Returns:
+        The cleaned annotation with normalized synonyms list.
+    """
     if not annotation.synonyms:
         return annotation
     synonym_triggers = ["Syn.:", "Synonym:", "Syn,:", "syn. "]
@@ -82,6 +127,17 @@ def clean_synonyms_annotation(annotation: Annotation):
 
 
 def clean_annotation(annotation: Annotation):
+    """Clean all components of an annotation.
+    
+    Applies cleaning to lay terms, technical terms, and synonyms in sequence.
+    Order matters as synonyms may reference cleaned lay/tech terms.
+    
+    Args:
+        annotation: The annotation object to fully clean.
+        
+    Returns:
+        The fully cleaned annotation.
+    """
     annotation = clean_lay_annotation(annotation)
     annotation = clean_tech_annotation(annotation)
     # order matters because synonyms could still be added from lay or tech terms
@@ -90,6 +146,18 @@ def clean_annotation(annotation: Annotation):
 
 
 def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True):
+    """Create search terms with stems from annotated samples.
+    
+    Generates searchable terms by stemming medical terms and their synonyms
+    using the CISTEM stemmer. Optionally links synonyms with overlapping stems.
+    
+    Args:
+        samples: List of Sample objects containing annotations.
+        intersect_terms: If True, link terms with overlapping stems.
+        
+    Returns:
+        SearchTerms object containing all processed search terms.
+    """
     search_terms = []
     annotations = [ann for sample in samples for ann in sample.annotations]
     for annotation in annotations:
@@ -106,6 +174,17 @@ def create_search_terms_from_samples(samples: List[Sample], intersect_terms=True
 
 
 def link_synonyms(search_terms: List[SearchTerm]):
+    """Link search terms with overlapping stems.
+    
+    Iteratively finds and merges search terms that share common stems,
+    creating connected synonym groups. Continues until no new links are found.
+    
+    Args:
+        search_terms: List of SearchTerm objects to link.
+        
+    Note:
+        Modifies search_terms in place by updating their stems sets.
+    """
     while True:
         with tqdm(total=len(search_terms) ** 2) as pbar:
             found_new_link = False

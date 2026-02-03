@@ -6,7 +6,7 @@ class TLCPaths:
     # Use environment variable or default to relative path from project root
     project_path = Path(os.getenv("PROJECT_PATH", Path(__file__).parent.parent.resolve()))
     tlc_dir = Path(os.getenv("TLC_DATASET_PATH", project_path / "data" / "TLC_v01"))
-    
+
     # Only initialize paths if dataset directory exists
     if tlc_dir.exists():
         kidney_dir = tlc_dir.joinpath("Kidney")
@@ -20,7 +20,7 @@ class TLCPaths:
         dataset_files = []
         annotation_files = []
         sample_files = []
-    
+
     project_data_path = project_path / "data"
     json_dir = project_data_path / "tlc_json"
     if not json_dir.exists():

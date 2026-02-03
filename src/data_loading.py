@@ -14,19 +14,18 @@ from tqdm import tqdm
 
 from config import TLCPaths
 from data_cleaning import clean_annotation, create_search_terms_from_samples
-from models import TermType, SubForumType, Annotation, Sample, SearchTerms
-from models import WUMLSEntry
+from models import Annotation, Sample, SearchTerms, SubForumType, TermType, WUMLSEntry
 
 
 def process_sample_file(file: Path):
     """Read and process a sample text file.
-    
+
     Handles different encodings (UTF-8 and Latin-1) to ensure
     successful file reading.
-    
+
     Args:
         file: Path to the sample text file.
-        
+
     Returns:
         The file content as a string.
     """
@@ -41,16 +40,16 @@ def process_sample_file(file: Path):
 
 def process_annotation_file(file: Path):
     """Parse annotation file and extract medical term annotations.
-    
+
     Processes BRAT-style annotation files to extract lay terms (Laienbegriff)
     and technical terms (Fachterm) along with their spans and synonyms.
-    
+
     Args:
         file: Path to the .ann annotation file.
-        
+
     Returns:
         List of Annotation objects parsed from the file.
-        
+
     Raises:
         ValueError: If source type is not LAY or TECH.
     """
@@ -99,10 +98,10 @@ def process_annotation_file(file: Path):
 
 def process_tlc_files():
     """Process all TLC-UMLS sample and annotation files.
-    
+
     Loads and pairs sample text files with their corresponding annotation files,
     creating Sample objects with cleaned annotations.
-    
+
     Returns:
         List of Sample objects containing text and annotations.
     """
@@ -122,10 +121,10 @@ def process_tlc_files():
 
 def create_tlc_json_files():
     """Process TLC files and save samples as JSON.
-    
+
     Converts TLC-UMLS samples to JSON format and saves them to the
     configured JSON directory.
-    
+
     Returns:
         List of processed Sample objects.
     """
@@ -138,9 +137,9 @@ def create_tlc_json_files():
 
 def load_tlc_samples():
     """Load TLC-UMLS samples from JSON files.
-    
+
     Reads previously processed samples from the JSON directory.
-    
+
     Returns:
         List of Sample objects loaded from JSON.
     """
@@ -153,10 +152,10 @@ def load_tlc_samples():
 
 def create_search_terms_json_file():
     """Create and save search terms JSON file.
-    
+
     Generates stemmed search terms from TLC samples and saves them
     to the configured search terms file.
-    
+
     Returns:
         SearchTerms object containing all search terms.
     """
@@ -169,7 +168,7 @@ def create_search_terms_json_file():
 
 def load_search_terms():
     """Load search terms from JSON file.
-    
+
     Returns:
         SearchTerms object parsed from the search terms file.
     """
@@ -178,12 +177,12 @@ def load_search_terms():
 
 def load_jsonl_file_as_generator(path):
     """Load a JSONL file as a generator of JSON objects.
-    
+
     Memory-efficient loading for large JSONL files.
-    
+
     Args:
         path: Path to the JSONL file.
-        
+
     Yields:
         Parsed JSON objects, one per line.
     """
@@ -199,13 +198,13 @@ annotations = [ann for sample in load_tlc_samples() for ann in sample.annotation
 @annotations_cache.memoize()
 def get_annotation_ids(mention: str):
     """Get all annotation IDs for a given mention.
-    
+
     Cached function that searches through all annotations to find
     matching mentions.
-    
+
     Args:
         mention: The medical term mention to search for.
-        
+
     Returns:
         List of annotation IDs that match the mention.
     """
@@ -218,24 +217,26 @@ def get_annotation_ids(mention: str):
 
 def load_wumls_entries(wumls_file=None):
     """Load WUMLS (German UMLS) entries from RRF file.
-    
+
     Parses the MRCONSO RRF file format to extract UMLS concepts
     for German language.
-    
+
     Args:
         wumls_file: Path to the WUMLS RRF file. If None, uses default
                     from environment or standard data location.
-        
+
     Returns:
         List of WUMLSEntry objects containing CUI, language, name, and source.
     """
     import os
     from pathlib import Path
-    
+
     if wumls_file is None:
-        wumls_file = os.getenv('WUMLS_DATASET_PATH', 
-                               Path(__file__).parent.parent / 'data' / 'WUMLS' / 'MRCONSO_WUMLS_GER.RRF')
-    
+        wumls_file = os.getenv(
+            "WUMLS_DATASET_PATH",
+            Path(__file__).parent.parent / "data" / "WUMLS" / "MRCONSO_WUMLS_GER.RRF",
+        )
+
     entries = []
     with open(wumls_file, newline='\n') as csvfile:
         spamreader = csv.reader(csvfile, delimiter='|')
